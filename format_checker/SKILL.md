@@ -1,21 +1,20 @@
-# Skill: format_checker
+---
+name: format_checker
+description: SRT subtitle format checker for 深影字幕组, checks .srt files against team formatting standards. When the user asks to "check format", "检查格式", "check the format of", or review an SRT file for compliance, call this skill
+---
 
-## Description
-SRT subtitle format checker for 深影字幕组. Checks specified `.srt` files in this project against the team's translation and formatting standards.
+# SRT format checker
 
-## Scope
-This skill applies ONLY to files within the `caption` project folder.
+## Usage Scope
+This skill applies ONLY to `.srt` files within the `caption` project folder.
 
-## When to Use
-When the user asks to "check format", "检查格式", "check the format of", or review an SRT file for compliance.
-
-## How to Use
+## Steps
 1. Read the target `.srt` file, DO NOT modify anything in the .srt file
 2. Check every subtitle block against ALL rules below
 3. Output a report listing every violation with: subtitle number, line number, current content, which rule is violated, and suggested fix
 4. At the end, list which rules passed with no issues
 
-## Format Rules
+## Rules
 
 ### Rule 1: SRT Five-Line Structure
 Each subtitle block must follow this exact structure:
@@ -50,7 +49,6 @@ HH:MM:SS,mmm --> HH:MM:SS,mmm
   - Quotation marks "" (allowed)
   - Book title marks 《》 (allowed)
 - All other Chinese punctuation (，。？！、：；) must be replaced with **one space**
-- That means: no commas, periods, question marks, exclamation marks, colons, semicolons in Chinese lines
 
 ### Rule 6: English Subtitle Punctuation
 - All English punctuation must be **half-width** (not full-width)
@@ -65,7 +63,7 @@ HH:MM:SS,mmm --> HH:MM:SS,mmm
 - Ellipsis = three half-width periods: `...`
 - NOT `…` (shift+6 full-width ellipsis)
 - NOT `..` (only two periods)
-- Unfinished speech shown as `--` or `-` at end of line → change to `...` (both Chinese AND English)
+- Unfinished speech shown as `--` or `-` at end of line -> change to `...` (both Chinese AND English)
 - Do NOT use find-replace for `--` because timecodes contain `-->`
 - Chinese ellipsis: keep if appropriate; English ellipsis: always keep
 
@@ -82,55 +80,44 @@ HH:MM:SS,mmm --> HH:MM:SS,mmm
 - BOTH Chinese and English lines must have dashes
 - Example CN: `- 当老大不容易 - 是啊 - 你记住这点`
 - Example EN: `- It ain't easy being king. - Yeah. - You remember that.`
-- If English is missing dashes, add them based on video content
-- Multi-line dialogue must be merged into one line first
 
 ### Rule 11: Lyrics Format
 - Chinese lyrics: add ♪ at BOTH beginning and end, **no space** between ♪ and text
   - Correct: `♪烟尘弥漫丘陵♪`
   - Wrong: `♪ 烟尘弥漫丘陵 ♪` (spaces)
-  - Wrong: `♪烟尘弥漫丘陵♪♪` (double ♪)
-  - Wrong: `♪烟尘弥漫丘陵` (missing closing ♪)
 - English lyrics: do NOT add ♪
 
 ### Rule 12: Long Sentence Handling
 - English subtitles: do NOT break lines (line splitting is done by team lead)
 - Chinese subtitles: break by meaning groups (~10 characters per group)
-- Each English line must have a corresponding Chinese line above it
-- Max ~22 Chinese characters per subtitle line (audience needs to read in 2-4 seconds)
+- Max ~22 Chinese characters per subtitle line
 
 ### Rule 13: Names and Proper Nouns
-- Regular English names (Linda, Charlie): keep in English, **capitalize first letter**
-- Famous/established names: translate to Chinese (Marx→马克思, Obama→奥巴马)
-- Known place names: translate to Chinese (Los Angeles→洛杉矶)
+- Regular English names (Linda, Charlie): keep in English, capitalize first letter
+- Famous/established names: translate to Chinese (Marx->马克思, Obama->奥巴马)
+- Known place names: translate to Chinese (Los Angeles->洛杉矶)
 - Unknown/ordinary place names: keep in English
 
 ### Rule 14: Number Localization
-- In Chinese subtitles, convert Arabic numbers to Chinese characters (5→五, 2→两)
-- Exceptions (keep Arabic):
-  - Numbers with more than 2 digits (e.g., 233, 4567)
-  - Long sequences of numbers (e.g., 11,12,13...)
+- In Chinese subtitles, convert Arabic numbers to Chinese characters (5->五, 2->两)
+- Exceptions (keep Arabic): numbers with 3+ digits (233, 4567) or long sequences
 
 ### Rule 15: Annotation Subtitles (硬字幕)
-- Used for: explaining on-screen text OR unfamiliar terms in dialogue
-- Must include `{\an8}` at the start of the text (positions subtitle at top of screen)
+- Used for explaining on-screen text or unfamiliar terms
+- Must include `{\an8}` at the start of the text
 - Timecode must match the original subtitle being annotated
-- Sequence number can be duplicated (software auto-corrects)
-- Content should be concise and clear
 - Common knowledge (DNA, CEO, 911) does NOT need annotation
 
 ### Rule 16: Filler Words
-- "you know", "I mean", "ah", "oh" etc. → do not translate
-- If a filler word occupies an entire subtitle block by itself → delete the whole block
-- Exception: if the filler word is plot-critical, translate it
+- "you know", "I mean", "ah", "oh" etc. -> do not translate
+- If a filler word occupies an entire subtitle block -> delete the whole block
+- Exception: plot-critical fillers should be translated
 
 ### Rule 17: Intensity Words
-- Words like "bloody", "hell" used for emphasis → translate contextually
+- Words like "bloody", "hell" used for emphasis -> translate contextually
 - Do NOT translate literally (e.g., don't translate "hell" as 地狱 when it's just emphasis)
 
-## Report Format
-Output the report in this structure:
-
+## Output format
 ```
 === SRT 格式检查报告 ===
 文件：[filename]
@@ -143,11 +130,8 @@ Output the report in this structure:
   问题说明：...
   修改建议：...
 
-(repeat for each issue)
-
 --- 合规项目 ---
 ✓ 规则 X：[规则名称] — 全部通过
-(list all rules that passed)
 
 --- 统计 ---
 共检查 XX 个字幕块，发现 XX 处问题
