@@ -16,21 +16,29 @@ Read the format checker skill at `.claude/skills/format_checker/SKILL.md` to loa
 ### Step 2: Read the Target SRT File
 Read the entire `.srt` file. Count the total number of subtitle blocks.
 
-### Step 3: Translate in Parallel Chunks
-Split the subtitle blocks into chunks of ~200 blocks each. Use background Task agents to translate chunks in parallel. Each agent receives:
-- The chunk of English subtitle text (sequence numbers + English lines)
-- A summary of all relevant formatting rules (see below)
-- Instructions to return ONLY a Python dictionary literal mapping sequence number to Chinese translation string
+### Step 3: Translate and Write
 
-### Step 4: Assemble via Python Script
-Generate a temporary Python script (`_translate_tmp.py`) that:
-1. Defines all Chinese translations as a `dict[int, str]`
-2. Reads the original SRT file with `encoding="utf-8-sig"` (handles BOM)
-3. Parses each block and inserts the Chinese line above the English line
-4. Writes the output back to the same file with `encoding="utf-8"` and `newline="\n"`
-5. Run the script, then delete it after success
+Choose the approach based on file size:
 
-### Step 5: Verify
+#### Small files (≤100 blocks): Direct Write
+- Translate all blocks inline
+- Use the Write tool to write the translated SRT file directly (Chinese line above English line, 5-line structure per block)
+- No Python script needed
+
+#### Large files (>100 blocks): Parallel Chunks + Python Script
+- Split the subtitle blocks into chunks of ~200 blocks each
+- Use background Task agents to translate chunks in parallel. Each agent receives:
+  - The chunk of English subtitle text (sequence numbers + English lines)
+  - A summary of all relevant formatting rules (see below)
+  - Instructions to return ONLY a Python dictionary literal mapping subtitle sequence number (int) to Chinese translation (str)
+- Generate a temporary Python script (`_translate_tmp.py`) that:
+  1. Defines all Chinese translations as a `dict[int, str]`
+  2. Reads the original SRT file with `encoding="utf-8-sig"` (handles BOM)
+  3. Parses each block and inserts the Chinese line above the English line
+  4. Writes the output back to the same file with `encoding="utf-8"` and `newline="\n"`
+  5. Run the script, then delete it after success
+
+### Step 4: Verify
 Read the beginning and end of the output file to confirm correct 5-line structure.
 
 ## Rules
