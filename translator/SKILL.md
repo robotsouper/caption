@@ -14,7 +14,7 @@ This skill applies ONLY to `.srt` files within the `caption` project folder.
 Read the format checker skill at `.claude/skills/format_checker/SKILL.md` to load all 17 formatting rules. Every translation must comply with these rules.
 
 ### Step 2: Read the Target SRT File
-Read the entire `.srt` file. Count the total number of subtitle blocks.
+Read the entire `.srt` file. Count the total number of subtitle blocks. Do not modify any of the original English lines, timestamps, punctuations... ONLY add chinese translation.
 
 ### Step 3: Translate and Write
 
